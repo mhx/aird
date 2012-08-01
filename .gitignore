@@ -1,5 +1,27 @@
+# Ignore valgrind output files
+cachegrind.out.*
+massif.out.*
+
+# Ignore vim swap files and other editors' temporary files
+*~
+.*.swp
+.*.swo
+.*.kate-swp
+
+# Ignore compiler output
+*.a
+*.o
+*.so
+
+# Ignore log files
+*.log
+
+# Ignore CMake related auto-generated files
+CMakeFiles/
 CMakeCache.txt
-CMakeFiles
 Makefile
 cmake_install.cmake
+cmake_uninstall.cmake
+cmake_uninstall.cmake.in
 install_manifest.txt
+/configure-stamp

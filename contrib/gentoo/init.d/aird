@@ -1,0 +1,19 @@
+#!/sbin/runscript
+
+description="A highly configurable backlight and fan control daemon for MacBook Air."
+
+depend() {
+        need net
+}
+
+start() {
+        ebegin "Running aird daemon"
+        start-stop-daemon --start --quiet --exec /usr/bin/aird
+        eend $?
+}
+
+stop() {
+        ebegin "Stopping aird daemon"
+        start-stop-daemon --stop --pidfile /var/run/aird.pid
+        eend $?
+}

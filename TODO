@@ -1,0 +1,5 @@
+- after dpms off, make sure that we reset the backlight to the last value
+- monitor key and mouse events separately
+- monitor applications that play video
+- make "dim" level depend on ambient light?
+- do make sure our buffers work nicely after hibernate
