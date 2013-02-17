@@ -237,7 +237,7 @@ bool event_source_impl::is_apple_keyboard(const input_id& id) const
 {
    return id.bustype == BUS_USB &&
           id.vendor == 0x05ac &&
-          id.product == 0x0249;
+          (id.product == 0x0249 || id.product == 0x024c);
 }
 
 #ifndef NDEBUG
