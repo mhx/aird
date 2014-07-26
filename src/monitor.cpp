@@ -25,6 +25,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************/
 
+#include <deque>
 #include <fstream>
 #include <sstream>
 #include <cstring>
@@ -112,14 +113,35 @@ class device
 public:
    device(const std::string& basepath, const std::string& name)
    {
-      boost::filesystem::path p(basepath);
+      std::deque<boost::filesystem::path> dirs;
+      dirs.emplace_back(basepath);
 
-      for (boost::filesystem::directory_iterator it(p); it != boost::filesystem::directory_iterator(); ++it)
+      while (!dirs.empty())
       {
-         if (object(*it / "device" / "name").get<std::string>() == name)
+         auto path = dirs.front();
+         dirs.pop_front();
+
+         try
          {
-            m_path = *it / "device";
-            return;
+            if (object(path / "name").get<std::string>() == name)
+            {
+               m_path = path;
+               return;
+            }
+         }
+         catch (...)
+         {
+         }
+
+         try
+         {
+            for (boost::filesystem::directory_iterator it(path); it != boost::filesystem::directory_iterator(); ++it)
+            {
+               dirs.emplace_back(*it);
+            }
+         }
+         catch (...)
+         {
          }
       }
 
@@ -229,6 +251,11 @@ public:
       }
 
       return cur;
+   }
+
+   const boost::filesystem::path& path() const
+   {
+      return m_dev.path();
    }
 
 private:
@@ -707,6 +734,11 @@ public:
       return m_kbd_backlight;
    }
 
+   const boost::filesystem::path& path() const
+   {
+      return m_dev.path();
+   }
+
 private:
    device m_dev;
    std::vector<fan> m_fan;
@@ -794,7 +826,7 @@ void monitor::settings::add_options(boost::program_options::options_description&
    using namespace boost::program_options;
 
    od.add_options()
-      ("monitor.hwmon_base_path", value<std::string>(&hwmon_base_path)->default_value("/sys/class/hwmon"))
+      ("monitor.hwmon_base_path", value<std::string>(&hwmon_base_path)->default_value("/sys/devices/platform"))
       ("monitor.intel_backlight_path", value<std::string>(&intel_backlight_path)->default_value("/sys/class/backlight/intel_backlight"))
       ("monitor.battery_path", value<std::string>(&battery_path)->default_value("/sys/class/power_supply/BAT0"))
       ("monitor.ac_path", value<std::string>(&ac_path)->default_value("/sys/class/power_supply/ADP1"))
@@ -918,6 +950,9 @@ monitor_impl::monitor_impl(boost::asio::io_service& ios, root_logger& root, cons
 {
    m_energy_history.resize(m_history_size);
    m_temp_history.resize(m_history_size);
+
+   LINFO(m_log, "coretemp path: " << m_coretemp.path());
+   LINFO(m_log, "applesmc path: " << m_applesmc.path());
 }
 
 void monitor_impl::start()
