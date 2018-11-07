@@ -372,6 +372,11 @@ public:
    {
    }
 
+   bool configurable() const
+   {
+      return m_scaling_available_frequencies.exists();
+   }
+
    unsigned bios_limit() const
    {
       return m_bios_limit.get<unsigned>();
@@ -464,6 +469,11 @@ public:
 
          m_cpu.push_back(cpu(obj.path()));
       }
+   }
+
+   bool configurable() const
+   {
+     return !m_cpu.empty() && m_cpu.front().configurable();
    }
 
    const_iterator begin() const
@@ -1207,7 +1217,9 @@ void monitor_impl::run_checks()
       }
 
       check_fan();
-      check_cpu();
+      if (m_cpuinfo.configurable()) {
+        check_cpu();
+      }
    }
 }
 
