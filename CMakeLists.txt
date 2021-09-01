@@ -37,6 +37,7 @@ ADD_EXECUTABLE(aird
 
 TARGET_LINK_LIBRARIES(aird
                       ${Boost_LIBRARIES}
+                      pthread
                      )
 
 INSTALL(TARGETS aird
