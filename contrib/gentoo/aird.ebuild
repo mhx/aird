@@ -4,7 +4,7 @@ inherit eutils cmake-utils
 
 DESCRIPTION="A highly configurable backlight and fan control daemon for MacBook Air"
 HOMEPAGE="https://github.com/mhx/aird"
-SRC_URI="https://github.com/downloads/mhx/aird/v${P}.tar.bz2"
+SRC_URI="https://github.com/mhx/aird/archive/refs/tags/v${PV}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
